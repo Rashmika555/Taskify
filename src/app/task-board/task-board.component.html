@@ -1,0 +1,190 @@
+<div class="board-root" (click)="closeProfileMenu()">
+  <header class="board-header">
+    <div class="logo">✨ Taskify</div>
+    <div class="actions">
+      <select [(ngModel)]="sort" title="Sort Tasks">
+        <option value="Newest">📅 Newest</option>
+        <option value="Oldest">📅 Oldest</option>
+        <option value="Low">🟢 Low Priority</option>
+        <option value="Medium">🟡 Medium Priority</option>
+        <option value="High">🔴 High Priority</option>
+        <option value="Reset">Reset</option>
+      </select>
+      <button (click)="openAdd()" title="Add a new task">➕ Add Task</button>
+      <button (click)="openAddColumn()" title="Create custom column">➕ Column</button>
+      <div *ngIf="showAddColumn" class="add-col-inline">
+        <input [(ngModel)]="newColumnName" placeholder="📁 New column name..." />
+        <button (click)="addColumn()">✓</button>
+        <button (click)="cancelAddColumn()">✕</button>
+      </div>
+      <button class="header-link" (click)="openDashboard(); $event.stopPropagation()">
+        Dashboard
+      </button>
+      <div class="profile-wrap">
+        <button
+          class="avatar"
+          (click)="toggleProfileMenu($event)"
+          title="Open profile menu"
+          aria-haspopup="menu"
+          [attr.aria-expanded]="showProfileMenu"
+        >
+          {{ auth.getUser()?.name?.charAt(0)?.toUpperCase() }}
+        </button>
+        <div
+          *ngIf="showProfileMenu"
+          class="profile-menu"
+          role="menu"
+          (click)="$event.stopPropagation()"
+        >
+          <button (click)="openDashboard()">Dashboard</button>
+          <button (click)="navigate('/profile')">Profile</button>
+          <button (click)="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="board-body">
+    <section class="progress-panel" aria-label="Task completion progress">
+      <div class="progress-copy">
+        <span>Overall progress</span><strong>{{ completion() }}%</strong>
+      </div>
+      <div class="progress-track">
+        <div class="progress-value" [style.width.%]="completion()"></div>
+      </div>
+    </section>
+    <section class="stats-grid" aria-label="Task statistics">
+      <div class="stat-card">
+        <span>Total Tasks</span><strong>{{ stats().total }}</strong>
+      </div>
+      <div class="stat-card">
+        <span>Done</span><strong>{{ stats().done }}</strong>
+      </div>
+      <div class="stat-card">
+        <span>To-Do</span><strong>{{ stats().todo }}</strong>
+      </div>
+      <div class="stat-card">
+        <span>In Progress</span><strong>{{ stats().progress }}</strong>
+      </div>
+      <div class="stat-card">
+        <span>Delivered</span><strong>{{ stats().delivered }}</strong>
+      </div>
+    </section>
+    <aside class="columns">
+      <div
+        class="cols"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        [cdkDropListData]="columns()"
+        [cdkDropListEnterPredicate]="canEnterColumnList"
+        (cdkDropListDropped)="dropColumn($event)"
+      >
+        <div *ngFor="let col of columns()" class="col" cdkDrag [cdkDragData]="col">
+          <div class="col-header">
+            <button
+              class="column-drag-handle"
+              cdkDragHandle
+              type="button"
+              title="Reorder column"
+              aria-label="Reorder column"
+            >
+              ⋮⋮
+            </button>
+            <h3>
+              {{ col }}
+              <span style="color: #a78bfa; font-size: 12px; font-weight: 600"
+                >({{ getTasksByColumn(col).length }})</span
+              >
+            </h3>
+            <button
+              *ngIf="!['To-Do', 'In Progress', 'Done', 'Delivered'].includes(col)"
+              (click)="removeColumn(col)"
+              title="Delete column"
+            >
+              ✕
+            </button>
+          </div>
+          <div
+            cdkDropList
+            [id]="col"
+            [cdkDropListConnectedTo]="columns()"
+            [cdkDropListData]="getTasksByColumn(col)"
+            [cdkDropListEnterPredicate]="canEnterTaskList"
+            class="task-list"
+            (cdkDropListDropped)="drop($event, col)"
+          >
+            <div
+              *ngFor="let t of getTasksByColumn(col)"
+              cdkDrag
+              [cdkDragData]="t"
+              class="task-card"
+            >
+              <div *cdkDragPlaceholder class="task-card task-placeholder"></div>
+              <div class="task-head">
+                <strong>{{ t.title }}</strong>
+                <div class="task-actions">
+                  <button (click)="editTask(t)" title="Edit task">✎</button>
+                  <button (click)="deleteTask(t)" title="Delete task">✕</button>
+                </div>
+              </div>
+              <p class="muted">{{ t.description || '(No description)' }}</p>
+              <div class="meta">
+                <span [class.overdue]="isOverdue(t)" *ngIf="t.dueDate"
+                  >📅 {{ t.dueDate | date: 'MMM d' }}</span
+                >
+                <span class="prio" [ngClass]="'prio-' + t.priority.toLowerCase()">{{
+                  t.priority
+                }}</span>
+              </div>
+            </div>
+            <div *ngIf="getTasksByColumn(col).length === 0" class="empty-state">
+              ✨ No tasks yet. Drag tasks here!
+            </div>
+          </div>
+          <button class="column-add" (click)="openAdd(col)">➕ Add Task</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <app-dashboard
+    *ngIf="showDashboard"
+    [tasksInput]="tasks()"
+    [columnsInput]="columns()"
+    [modalMode]="true"
+    (closed)="showDashboard = false"
+  ></app-dashboard>
+
+  <div *ngIf="showAddTask" class="modal" (click)="showAddTask = false">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h3>{{ editingTask ? '✎ Edit Task' : '✨ Add New Task' }}</h3>
+      <input [(ngModel)]="formTitle" placeholder="Task title..." required aria-label="Task title" />
+      <textarea [(ngModel)]="formDescription" placeholder="Add details (optional)..."></textarea>
+      <input type="date" [(ngModel)]="formDue" />
+      <select [(ngModel)]="taskColumn" [disabled]="!!editingTask">
+        <option *ngFor="let col of columns()" [value]="col">{{ col }}</option>
+      </select>
+      <select [(ngModel)]="formPriority">
+        <option value="Low">🟢 Low Priority</option>
+        <option value="Medium">🟡 Medium Priority</option>
+        <option value="High">🔴 High Priority</option>
+      </select>
+      <div class="modal-actions">
+        <button (click)="submitTask()">💾 Save</button>
+        <button (click)="showAddTask = false">✕ Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="pendingDelete" class="modal" (click)="pendingDelete = null">
+    <div class="modal-card confirm-card" (click)="$event.stopPropagation()">
+      <h3>Are you sure you want to delete this {{ pendingDelete.type }}?</h3>
+      <div class="modal-actions">
+        <button (click)="pendingDelete = null">Cancel</button>
+        <button class="danger-action" (click)="confirmDelete()">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <app-toast-center></app-toast-center>
+</div>

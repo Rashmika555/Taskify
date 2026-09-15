@@ -1,0 +1,111 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Welcome to Taskify",
+      "description": "This is a demo task. Register and create your own tasks.",
+      "column": "To-Do",
+      "dueDate": null,
+      "priority": "Low",
+      "ownerId": "demo-user",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "title": "assignment",
+      "description": "",
+      "column": "In Progress",
+      "dueDate": "2026-03-05",
+      "priority": "Medium",
+      "ownerId": "mm9ib840-yikl53",
+      "createdAt": "2026-03-02T18:23:34.297Z",
+      "id": "2"
+    },
+    {
+      "title": "work",
+      "description": "",
+      "column": "To-Do",
+      "dueDate": "2026-03-01",
+      "priority": "High",
+      "ownerId": "mm9ib840-yikl53",
+      "createdAt": "2026-03-02T18:33:35.499Z",
+      "id": "3"
+    },
+    {
+      "title": "Easting",
+      "description": "",
+      "column": "Done",
+      "dueDate": "2026-05-02",
+      "priority": "Low",
+      "ownerId": "mm9ib840-yikl53",
+      "createdAt": "2026-03-02T19:04:42.402Z",
+      "id": "4"
+    },
+    {
+      "id": "6929",
+      "title": "assigment",
+      "description": "journal",
+      "column": "To-Do",
+      "dueDate": "2026-09-25",
+      "priority": "Medium",
+      "ownerId": "mu1fvx3y-6jyl72",
+      "createdAt": "2026-09-14T17:17:24.035Z",
+      "position": 0
+    },
+    {
+      "id": "dae3",
+      "title": "assigment",
+      "description": "journal",
+      "column": "To-Do",
+      "dueDate": "2026-09-30",
+      "priority": "Low",
+      "ownerId": "mu1fvx3y-6jyl72",
+      "createdAt": "2026-09-14T16:26:40.528Z",
+      "position": 2
+    },
+    {
+      "title": "improve ai",
+      "description": "male it look static",
+      "column": "Done",
+      "dueDate": "2026-09-12",
+      "priority": "Low",
+      "ownerId": "mu1fvx3y-6jyl72",
+      "createdAt": "2026-09-14T17:13:03.427Z",
+      "id": "2dNL6TW",
+      "position": 1
+    },
+    {
+      "title": "add delete functionality",
+      "description": "through buttons",
+      "column": "In Progress",
+      "dueDate": "2026-09-16",
+      "priority": "High",
+      "ownerId": "mu1fvx3y-6jyl72",
+      "createdAt": "2026-09-14T17:18:30.706Z",
+      "id": "8Nheqdr",
+      "position": 0
+    },
+    {
+      "title": "notification",
+      "description": "make it look bigger",
+      "column": "In Progress",
+      "dueDate": "2026-09-22",
+      "priority": "High",
+      "ownerId": "mu1fvx3y-6jyl72",
+      "createdAt": "2026-09-14T17:16:07.997Z",
+      "id": "R6IzPUk",
+      "position": 0
+    },
+    {
+      "title": "course completion",
+      "description": "infosys",
+      "column": "Delivered",
+      "dueDate": "2026-09-14",
+      "priority": "High",
+      "ownerId": "mu1fvx3y-6jyl72",
+      "createdAt": "2026-09-14T17:15:52.003Z",
+      "id": "z8vjVLY",
+      "position": 0
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
